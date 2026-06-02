@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>CLS — Cross-Layer Stitch | Межуровневая синхронизация без передачи</title>
+  <title>CLS — Cross-Layer Stitch | Кросс-уровневая стяжка - синхронизация узлов без передачи управляющей информации</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
@@ -573,7 +573,7 @@
       "demo-tag": "PROOF OF CONCEPT",
       "demo-title": "CLS‑powered VPN demo",
       "demo-sub": "Full tunnel: obfuscation parameters (H1,S1,Jc) derived from CLS, CLS itself never transmitted.",
-      "video-desc": "Client and server establish TLS connection. CLS is computed independently on both sides — visible values match (first 8 bytes). Obfuscation parameters (H1, S1, Jc) and RNG seeds are derived from CLS. After closing TCP, both switch to UDP, client sends obfuscated ping, server replies pong. All synchronisation happens without transmitting CLS or derivative parameters over the network.\n\nNote: When no NAT exists (direct connections), the short initialisation handshake (trigger + confirmation) is not required at all — CLS can be derived immediately using standard transport parameters.",
+      "video-desc": "Client and server establish TLS connection. CLS is obtained independently on both sides — visible values match (first 8 bytes). Obfuscation parameters (H1, S1, Jc) and RNG seeds are derived from CLS. After closing TCP, both switch to UDP, client sends obfuscated ping, server replies pong. All synchronisation happens without transmitting CLS or derivative parameters over the network.\n\nNote: When no NAT exists (direct connections), the short initialisation handshake (trigger + confirmation) is not required at all — CLS can be obtained immediately using standard transport parameters.",
       "patent-head": "Russian patent application",
       "patent-number": "Application № 2026113066 dated 21.04.2026",
       "contact-title": "We are looking for a strategic partnership",
@@ -643,7 +643,7 @@
       "demo-tag": "ДЕМОНСТРАЦИЯ",
       "demo-title": "Демо VPN на основе CLS",
       "demo-sub": "Полноценный туннель: параметры обфускации (H1,S1,Jc) выводятся из CLS, сам CLS никогда не передаётся.",
-      "video-desc": "Клиент и сервер устанавливают TLS-соединение. CLS получается независимо на обеих сторонах — значения совпадают (первые 8 байт). Параметры обфускации (H1, S1, Jc) и seed ГПСЧ выводятся из CLS. После закрытия TCP переход на UDP, клиент шлёт обфусцированный ping, сервер отвечает pong. Вся синхронизация происходит без передачи CLS или производных параметров.\n\nПримечание: Если NAT отсутствует (прямое соединение), короткий handshake инициализации (триггер + подтверждение) не требуется — CLS может быть вычислен немедленно, используя стандартные транспортные параметры.",
+      "video-desc": "Клиент и сервер устанавливают TLS-соединение. CLS получается независимо на обеих сторонах — значения совпадают (первые 8 байт). Параметры обфускации (H1, S1, Jc) и seed ГПСЧ выводятся из CLS. После закрытия TCP переход на UDP, клиент шлёт обфусцированный ping, сервер отвечает pong. Вся синхронизация происходит без передачи CLS или производных параметров.\n\nПримечание: Если NAT отсутствует (прямое соединение), короткий handshake инициализации (триггер + подтверждение) не требуется — CLS может быть получен немедленно, используя стандартные транспортные параметры.",
       "patent-head": "Заявка на патент РФ",
       "patent-number": "Заявка № 2026113066 от 21.04.2026",
       "contact-title": "Ищем стратегическое партнёрство",
