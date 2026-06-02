@@ -314,13 +314,15 @@
     <a href="#demo" class="btn-primary" data-i18n="demo-btn">See CLS in action</a>
   </div>
 
-  <!-- CLS core description -->
+   <!-- CLS core description -->
   <div class="card" style="text-align: center; margin: 16px 0 24px;">
     <div style="font-size: 1.05rem; max-width: 780px; margin: 0 auto;">
-      <p class="core-en"><strong>CLS</strong> (Cross-Layer Stitch) allows two networked nodes to independently generate an identical session parameter — <strong class="gradient-text">without ever transmitting it over the wire</strong>.</p>
-      <p class="core-en" style="margin-top: 12px;">Derived from transport layer (L4) and secure session (L5+). Implicit synchronisation, no detectable signatures, unique per session.</p>
-      <p class="core-ru" style="display: none;"><strong>CLS</strong> (Cross-Layer Stitch, «Межуровневая стяжка») позволяет двум узлам сети независимо вычислить одинаковый сессионный параметр — <strong class="gradient-text">без его передачи по сети</strong>.</p>
-      <p class="core-ru" style="margin-top: 12px; display: none;">Вычисляется из параметров транспортного уровня (L4) и защищённой сессии (L5+). Неявная синхронизация, отсутствие сигнатур, уникальность для каждой сессии.</p>
+      <p class="core-en"><strong>CLS (Cross-Layer Stitch) technology</strong> allows two network nodes to obtain the same cross-layer parameter value on two network nodes that have established a transport connection — <strong class="gradient-text">without transmission over the network and without prior agreement</strong>.</p>
+      <p class="core-en" style="margin-top: 12px;">This parameter is tightly bound to the transport session, is cryptographically secure, and is unique to each connection. The technology used to obtain it does not introduce detectable anomalies into network traffic. This allows this parameter to be used as control information for synchronizing the behavior of nodes establishing a connection, as well as converting its value into derived values for use in various network connection subsystems. </p>
+	  <p class="core-en" style="display: none;"><strong class="gradient-text">CLS is the world's first technology for synchronizing network nodes WITHOUT EXCHANGE of synchronization information.</strong>
+      <p class="core-ru"><strong>Технология CLS</strong> (Cross-Layer Stitch) позволяет двум узлам сети получить одинаковое значение кросс-уровневого параметра на двух узлах сети, установивших транспортное соединение — <strong class="gradient-text"> без передачи по сети и без предварительного согласования </strong>.</p>
+      <p class="core-ru" style="margin-top: 12px; display: none;">Параметр жёстко привязан к транспортной сессии, обладает криптографической стойкостью и уникален для каждого соединения. Технология его получения не вносит обнаруживаемых аномалий в сетевой трафик. Это позволяет использовать этот параметр как управляющую информацию для синхронизации поведения узлов, установивших соединение, а также преобразовывать его значение в производные значения для использования в различных функциональных подсистемах сетевых соединений. </p>
+	  <p class="core-ru" style="display: none;"><strong class="gradient-text">CLS — первая в мире технология синхронизации узлов сети БЕЗ ОБМЕНА синхронизирующей информацией.</strong></p>
     </div>
   </div>
 
@@ -586,7 +588,7 @@
       "demo-btn": "Смотреть демо",
       "why-title": "Почему CLS меняет правила",
       "prop1-title": "Кросс‑уровневость",
-      "prop1-desc": "Вычисляется из L4 и L5+, привязка к соединению.",
+      "prop1-desc": "Использует данные из уровней L4 и L5+, жестко привязан к соединению.",
       "prop2-title": "Никогда не передаётся",
       "prop2-desc": "Существует только на узлах — DPI/ML не видят.",
       "prop3-title": "Уникальность сессии & PFS",
