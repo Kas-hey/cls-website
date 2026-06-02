@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>CLS — Cross-Layer Stitch | Межуровневая синхронизация без передачи</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #05050A;
+      font-family: 'Inter', sans-serif;
+      color: #EDEDED;
+      line-height: 1.5;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #networkCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin: 32px 0;
+    }
+
+    .card {
+      background: rgba(18, 18, 28, 0.8);
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(56, 68, 118, 0.3);
+      border-radius: 24px;
+      padding: 28px;
+      transition: all 0.3s ease;
+      height: 100%;
+      text-align: left;
+    }
+
+    .card:hover {
+      border-color: #00D4FF;
+      box-shadow: 0 8px 24px rgba(0, 212, 255, 0.1);
+    }
+
+    @media (max-width: 1024px) {
+      .apps-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .apps-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    body, .container, .card, .hero-sub, .tag, .btn-outline, .btn-primary, .logo, footer, .contact-icon, .contact-links a, .contact-row {
+      font-family: 'Inter', sans-serif;
+    }
+    h1, h2, h3 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    h1 {
+      font-size: 3.5rem;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #FFFFFF 0%, #A0A0B0 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 24px;
+    }
+    h2 {
+      font-size: 2rem;
+      margin: 32px 0 16px;
+      color: #FFFFFF;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #00D4FF, #3A7BD5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .tag {
+      background: rgba(0, 212, 255, 0.12);
+      color: #00D4FF;
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      display: inline-block;
+    }
+    .navbar {
+      padding: 24px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 32px;
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.7rem;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FFF, #00D4FF);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .lang-switch {
+      display: flex;
+      gap: 12px;
+      background: #111118;
+      padding: 6px 14px;
+      border-radius: 60px;
+      border: 1px solid #252535;
+    }
+    .lang-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 4px 10px;
+      border-radius: 40px;
+      transition: 0.2s;
+    }
+    .lang-btn.active {
+      background: #00D4FF;
+      color: #05050A;
+    }
+    .btn-outline {
+      border: 1px solid #2C2C3A;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 500;
+      transition: all 0.2s;
+      background: transparent;
+      color: #DDD;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-outline:hover {
+      border-color: #00D4FF;
+      color: #00D4FF;
+      background: rgba(0,212,255,0.05);
+    }
+    .btn-primary {
+      background: #00D4FF;
+      color: #05050A;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: 0.2s;
+      box-shadow: 0 4px 14px rgba(0,212,255,0.2);
+    }
+    .hero {
+      text-align: center;
+      max-width: 900px;
+      margin: 30px auto 48px;
+    }
+    .hero-sub {
+      font-size: 1.2rem;
+      color: #A0A0B0;
+      margin-bottom: 32px;
+    }
+    .feature-icon {
+      font-size: 2.2rem;
+      color: #00D4FF;
+      margin-bottom: 16px;
+    }
+    .feature-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .demo-video {
+      background: #0B0B12;
+      border-radius: 32px;
+      overflow: hidden;
+      border: 1px solid #2A2A35;
+      margin: 32px 0;
+      text-align: center;
+    }
+    video {
+      max-width: 100%;
+      display: block;
+      border-radius: 28px;
+      background: #000;
+    }
+    .vid-desc {
+      padding: 20px 24px;
+      background: rgba(0,0,0,0.4);
+      border-top: 1px solid #1A1A24;
+      text-align: left;
+      font-size: 0.9rem;
+      color: #CCC;
+    }
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .contact-icon {
+      font-size: 1.8rem;
+      color: #CCC;
+      transition: 0.2s;
+      text-decoration: none;
+    }
+    .contact-icon:hover {
+      color: #00D4FF;
+      transform: translateY(-3px);
+    }
+    .contact-row {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      background: #0E0E16;
+      display: inline-block;
+      padding: 8px 24px;
+      border-radius: 40px;
+      border: 1px solid #262633;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+    .contact-row a {
+      color: #00D4FF;
+      text-decoration: none;
+      border-bottom: 1px dotted #00D4FF;
+    }
+    .contact-row a:hover {
+      color: #2CE5FF;
+    }
+    footer {
+      margin-top: 80px;
+      padding: 32px 0;
+      border-top: 1px solid #15151F;
+      text-align: center;
+      color: #5A5A70;
+      font-size: 0.8rem;
+    }
+    .patent-badge {
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: #0B0E15;
+      border-radius: 24px;
+      padding: 12px 18px;
+      text-align: center;
+      margin: 40px 0 20px;
+    }
+    @media (max-width: 768px) {
+      h1 { font-size: 2.2rem; }
+      h2 { font-size: 1.6rem; }
+      .container { padding: 0 20px; }
+      .card { padding: 20px; }
+      .nav-inner { flex-direction: column; align-items: stretch; }
+      .vid-desc { font-size: 0.8rem; padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="networkCanvas"></canvas>
+
+<div class="container">
+  <div class="navbar">
+    <div class="nav-inner">
+      <div class="logo">CLS<span style="color:#00D4FF">|</span>tech</div>
+      <div style="display: flex; gap: 20px; align-items: center;">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="ru">RU</button>
+        </div>
+        <a href="#contact" class="btn-outline" data-i18n="contact-btn">Contact</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="tag" data-i18n="patent-tag">Patent pending · Priority: May 2026</div>
+    <h1 data-i18n="hero-title">Cross-Layer Stitch</h1>
+    <div class="hero-sub" data-i18n="hero-sub">Zero‑overhead synchronization. A cross-level parameter that is never transmitted.</div>
+    <a href="#demo" class="btn-primary" data-i18n="demo-btn">See CLS in action</a>
+  </div>
+
+  <!-- CLS core description -->
+  <div class="card" style="text-align: center; margin: 16px 0 24px;">
+    <div style="font-size: 1.05rem; max-width: 780px; margin: 0 auto;">
+      <p class="core-en"><strong>CLS</strong> (Cross-Layer Stitch) allows two networked nodes to independently generate an identical session parameter — <strong class="gradient-text">without ever transmitting it over the wire</strong>.</p>
+      <p class="core-en" style="margin-top: 12px;">Derived from transport layer (L4) and secure session (L5+). Implicit synchronisation, no detectable signatures, unique per session.</p>
+      <p class="core-ru" style="display: none;"><strong>CLS</strong> (Cross-Layer Stitch, «Межуровневая стяжка») позволяет двум узлам сети независимо вычислить одинаковый сессионный параметр — <strong class="gradient-text">без его передачи по сети</strong>.</p>
+      <p class="core-ru" style="margin-top: 12px; display: none;">Вычисляется из параметров транспортного уровня (L4) и защищённой сессии (L5+). Неявная синхронизация, отсутствие сигнатур, уникальность для каждой сессии.</p>
+    </div>
+  </div>
+
+  <!-- Key properties -->
+  <h2 class="gradient-text" data-i18n="why-title">Why CLS changes the game</h2>
+  <div class="apps-grid" style="margin-bottom: 40px;">
+    <div class="card"><div class="feature-icon"><i class="fas fa-link"></i></div><div class="feature-title" data-i18n="prop1-title">Cross‑layer binding</div><div data-i18n="prop1-desc">Derived from L4 + L5+, tied to exact connection.</div></div>
+    <div class="card"><div class="feature-icon"><i class="fas fa-eye-slash"></i></div><div class="feature-title" data-i18n="prop2-title">Never transmitted</div><div data-i18n="prop2-desc">Exists only on endpoints — DPI/ML never see it.</div></div>
+    <div class="card"><div class="feature-icon"><i class="fas fa-fingerprint"></i></div><div class="feature-title" data-i18n="prop3-title">Session‑unique & PFS</div><div data-i18n="prop3-desc">Each session creates distinct CLS, compromising one does not affect others.</div></div>
+  </div>
+
+  <!-- Applications (derived values) — 9 карточек -->
+  <h2 class="gradient-text" data-i18n="applications-title">Applications of CLS and its derived values</h2>
+  <div class="apps-grid">
+    <!-- Строка 1 -->
+    <div class="card"><i class="fas fa-shield-alt" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app1-title">VPN / Obfuscated tunnels</strong><p data-i18n="app1-desc">Encryption keys, obfuscation parameters (H1/S1/Jc) derived from CLS. No sync over wire, invisible to DPI/ML.</p></div>
+    <div class="card"><i class="fas fa-microchip" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app2-title">IIoT & URLLC</strong><p data-i18n="app2-desc">Device auth keys, replay counters, QoS parameters derived from CLS. Synchronisation without signalling.</p></div>
+    <div class="card"><i class="fas fa-chart-line" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app3-title">6G / Zero‑Trust</strong><p data-i18n="app3-desc">Implicit authentication, session keys, priority tags derived from CLS. Zero‑overhead for massive MIMO.</p></div>
+    
+    <!-- Строка 2 -->
+    <div class="card"><i class="fas fa-laptop-code" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app4-title">API security / anti‑fraud</strong><p data-i18n="app4-desc">HMAC keys for requests, dynamic tokens derived from CLS. Keys never transmitted.</p></div>
+    <div class="card"><i class="fas fa-user-lock" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app5-title">Passwordless auth</strong><p data-i18n="app5-desc">Time‑based tokens derived from CLS. No password transfer, replay protection.</p></div>
+    <div class="card"><i class="fas fa-dice-d6" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app6-title">Distributed systems / DRM</strong><p data-i18n="app6-desc">RNG seeds, stream keys derived from CLS. Replica synchronisation without extra round trips.</p></div>
+    
+    <!-- Строка 3 -->
+    <div class="card"><i class="fas fa-project-diagram" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app7-title">Multiplexed streams (QUIC/MPTCP)</strong><p data-i18n="app7-desc">Per‑stream derived keys from single CLS + Stream ID. Isolation, no per‑stream handshake.</p></div>
+    <div class="card"><i class="fas fa-coins" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app9-title">Cryptocurrencies / Blockchain</strong><p data-i18n="app9-desc">Per‑transaction signature keys derived from CLS, wallet authentication without private key exchange, protection against transaction replay across forks.</p></div>
+    <div class="card"><i class="fas fa-plane" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app8-title">UAV swarms / telemetry</strong><p data-i18n="app8-desc">Command authentication, rolling counters derived from CLS. Resilient to MITM/replay.</p></div>
+  </div>
+
+  <!-- Crypto properties -->
+  <h2 class="gradient-text" data-i18n="crypto-title">Cryptographic properties</h2>
+  <div class="apps-grid" style="margin-bottom: 30px;">
+    <div class="card"><i class="fas fa-lock" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="crypto1-title">No secret transmission</strong><p data-i18n="crypto1-desc">CLS never leaves the endpoints; cannot be intercepted in transit.</p></div>
+    <div class="card"><i class="fas fa-forward" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="crypto2-title">PFS & session binding</strong><p data-i18n="crypto2-desc">Unique per session, compromise of one session does not affect others.</p></div>
+    <div class="card"><i class="fas fa-infinity" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="crypto3-title">KDF scalability</strong><p data-i18n="crypto3-desc">Infinite isolated derived keys (HKDF) without extra transmissions.</p></div>
+	<!-- Вторая строка — пост‑квант по центру -->
+    <div class="card" style="grid-column: 2 / 3;"><i class="fas fa-charging-station" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="app10-title">Post‑quantum ready</strong><p data-i18n="app10-desc">The employed one-way mathematical functions remain secure against quantum attacks. For full post‑quantum protection it is enough to replace this functions with a quantum‑safe functions — the core CLS method stays unchanged.</p></div>
+  </div>
+
+  <!-- Target audience -->
+  <h2 class="gradient-text" data-i18n="audience-title">Who will benefit</h2>
+  <div class="apps-grid" style="margin-bottom: 20px;">
+    <div class="card"><i class="fas fa-building" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="audience1-title">Telecom & network equipment vendors</strong><p data-i18n="audience1-desc">Integrate CLS into 6G, URLLC, IIoT stacks.</p></div>
+    <div class="card"><i class="fas fa-chart-line" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="audience2-title">VPN / cybersecurity companies</strong><p data-i18n="audience2-desc">Build unblockable, DPI‑resistant tunnels with zero‑overhead sync.</p></div>
+    <div class="card"><i class="fas fa-coins" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="audience3-title">Blockchain / crypto exchanges</strong><p data-i18n="audience3-desc">Prevent transaction replay, strengthen wallet authentication.</p></div>
+    <div class="card"><i class="fas fa-microchip" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="audience4-title">IIoT & industrial automation</strong><p data-i18n="audience4-desc">Zero‑overhead security for sensors, actuators, real‑time control.</p></div>
+    <div class="card"><i class="fas fa-robot" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="audience5-title">UAV / robotics developers</strong><p data-i18n="audience5-desc">Lightweight command authentication, replay protection.</p></div>
+    <div class="card"><i class="fas fa-charging-station" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="audience6-title">Patent pools & licensors</strong><p data-i18n="audience6-desc">Acquire or sublicense the pending CLS patent family.</p></div>
+    <div class="card"><i class="fas fa-university" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="audience7-title">Banks, financial services</strong><p data-i18n="audience7-desc">Strengthen API security, prevent replay attacks, implicit session binding.</p></div>
+    <div class="card"><i class="fas fa-shield-virus" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="audience8-title">Defense & government, state services</strong><p data-i18n="audience8-desc">Hidden synchronisation, zero‑overhead authentication for classified / tactical networks.</p></div>
+    <div class="card"><i class="fas fa-landmark" style="color:#00D4FF; margin-bottom:10px; display:block;"></i><strong data-i18n="audience9-title">Enterprises of critical infrastructure</strong><p data-i18n="audience9-desc">Implicit authentication, resistance to MITM / DPI for sensitive data flows.</p></div>
+  </div>
+
+  <!-- Demo video -->
+  <div id="demo" style="margin: 48px 0 32px;">
+    <div style="text-align: center;">
+      <div class="tag" data-i18n="demo-tag">PROOF OF CONCEPT</div>
+      <h2 data-i18n="demo-title">CLS‑powered VPN demo</h2>
+      <p style="color:#AAA; max-width: 600px; margin: 12px auto;" data-i18n="demo-sub">Full tunnel: obfuscation parameters (H1,S1,Jc) derived from CLS, CLS itself never transmitted.</p>
+    </div>
+    <div class="demo-video">
+      <video autoplay loop muted playsinline preload="metadata" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1280' height='720' viewBox='0 0 1280 720'%3E%3Crect width='1280' height='720' fill='%230a0a0f'/%3E%3Ctext x='640' y='360' font-family='monospace' font-size='24' fill='%2300d4ff' text-anchor='middle' dominant-baseline='middle'%3ECLS-VPN Terminal Demo%3C/text%3E%3C/svg%3E">
+        <source src="assets/demo/cls-vpn-demo.mp4" type="video/mp4">
+      </video>
+      <div class="vid-desc" data-i18n="video-desc">
+        Client and server establish TLS connection. CLS is computed independently on both sides — visible values match (first 8 bytes). Obfuscation parameters (H1, S1, Jc) and RNG seeds are derived from CLS. After closing TCP, both switch to UDP, client sends obfuscated ping, server replies pong. All synchronisation happens without transmitting CLS or derivative parameters over the network.
+        <br><br>
+        <strong>Note:</strong> When no NAT exists (direct connections), the short initialisation handshake (trigger + confirmation) is not required at all — CLS can be derived immediately using standard transport parameters.
+      </div>
+    </div>
+  </div>
+
+  <!-- Patent & Partnership -->
+  <div class="patent-badge">
+    <i class="fas fa-file-alt"></i> <strong data-i18n="patent-head">Russian patent application</strong><br>
+    <span data-i18n="patent-number">Application № 2026113066 dated 21.04.2026</span>
+  </div>
+
+  <div id="contact" style="margin: 64px 0 32px; text-align: center;">
+    <h2 data-i18n="contact-title">We are looking for a strategic partnership</h2>
+    <p style="color:#AAA; max-width: 700px; margin: 16px auto;" data-i18n="contact-text">
+      We are seeking interested parties and partners to create a joint commercial product based on CLS (e.g., a VPN with implicit synchronization of tunnel behavior parameters, a secure messenger, etc.), to obtain a patent, license it, or acquire it. Priority date established, formal examination passed — ready for commercial engagement.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:eldicom@yandex.ru" class="contact-icon" title="Email"><i class="fas fa-envelope"></i></a>
+      <a href="https://t.me/CLS_tech" target="_blank" class="contact-icon" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+    </div>
+    <div class="contact-row">
+      📧 <a href="mailto:eldicom@yandex.ru">eldicom@yandex.ru</a> &nbsp;&nbsp;|&nbsp;&nbsp; Telegram: <a href="https://t.me/CLS_tech" target="_blank">@CLS_tech</a>
+    </div>
+  </div>
+
+  <footer>
+    <p data-i18n="footer1">Cross‑Layer Stitch (CLS) — priority patent application, May 2026. No source code or mathematical core is exposed without NDA.</p>
+    <p style="margin-top: 12px;">© 2026 CLS Technology — All rights reserved.</p>
+  </footer>
+</div>
+
+<script>
+  (function() {
+    const canvas = document.getElementById('networkCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let points = [];
+    let time = 0;
+    const numPoints = 90;
+    const connectionDistance = 210;
+    const gradientColor1 = '#00D4FF';
+    const gradientColor2 = '#3A7BD5';
+
+    function initPoints() {
+      points = [];
+      for (let i = 0; i < numPoints; i++) {
+        points.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.9,
+          vy: (Math.random() - 0.5) * 0.9,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    function drawGradientLine(x1, y1, x2, y2, alpha = 0.55) {
+      const grd = ctx.createLinearGradient(x1, y1, x2, y2);
+      grd.addColorStop(0, gradientColor1);
+      grd.addColorStop(1, gradientColor2);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = grd;
+      ctx.globalAlpha = alpha;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    function animate() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, width, height);
+      time += 0.02;
+      for (let p of points) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < -40) p.x = width + 40;
+        if (p.x > width + 40) p.x = -40;
+        if (p.y < -40) p.y = height + 40;
+        if (p.y > height + 40) p.y = -40;
+      }
+      for (let i = 0; i < points.length; i++) {
+        for (let j = i + 1; j < points.length; j++) {
+          const dx = points[i].x - points[j].x;
+          const dy = points[i].y - points[j].y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < connectionDistance) {
+            const alpha = (1 - dist / connectionDistance) * 0.55;
+            drawGradientLine(points[i].x, points[i].y, points[j].x, points[j].y, alpha);
+          }
+        }
+      }
+      for (let p of points) {
+        const twinkle = 0.5 + 0.5 * Math.sin(time * 3 + p.phase);
+        const rad = 2.2 + twinkle * 0.8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, rad, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 212, 255, ${0.7 + twinkle * 0.3})`;
+        ctx.shadowBlur = 9;
+        ctx.shadowColor = '#00D4FF';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      initPoints();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    animate();
+  })();
+
+  const translations = {
+    en: {
+      "patent-tag": "Patent pending · Priority: May 2026",
+      "hero-title": "Cross-Layer Stitch",
+      "hero-sub": "Zero‑overhead synchronization. A cross-level parameter that is never transmitted.",
+      "demo-btn": "See CLS in action",
+      "why-title": "Why CLS changes the game",
+      "prop1-title": "Cross‑layer binding",
+      "prop1-desc": "Derived from L4 + L5+, tied to exact connection.",
+      "prop2-title": "Never transmitted",
+      "prop2-desc": "Exists only on endpoints — DPI/ML never see it.",
+      "prop3-title": "Session‑unique & PFS",
+      "prop3-desc": "Each session creates distinct CLS, compromising one does not affect others.",
+      "applications-title": "Applications of CLS and its derived values",
+      "app1-title": "VPN / Obfuscated tunnels",
+      "app1-desc": "Encryption keys, obfuscation parameters (H1/S1/Jc) derived from CLS. No sync over wire, invisible to DPI/ML.",
+      "app2-title": "IIoT & URLLC",
+      "app2-desc": "Device auth keys, replay counters, QoS parameters derived from CLS. Synchronisation without signalling.",
+      "app3-title": "6G / Zero‑Trust",
+      "app3-desc": "Implicit authentication, session keys, priority tags derived from CLS. Zero‑overhead for massive MIMO.",
+      "app4-title": "API security / anti‑fraud",
+      "app4-desc": "HMAC keys for requests, dynamic tokens derived from CLS. Keys never transmitted.",
+      "app5-title": "Passwordless auth",
+      "app5-desc": "Time‑based tokens derived from CLS. No password transfer, replay protection.",
+      "app6-title": "Distributed systems / DRM",
+      "app6-desc": "RNG seeds, stream keys derived from CLS. Replica synchronisation without extra round trips.",
+      "app7-title": "Multiplexed streams (QUIC/MPTCP)",
+      "app7-desc": "Per‑stream derived keys from single CLS + Stream ID. Isolation, no per‑stream handshake.",
+      "app8-title": "UAV swarms / telemetry",
+      "app8-desc": "Command authentication, rolling counters derived from CLS. Resilient to MITM/replay.",
+      "app9-title": "Cryptocurrencies / Blockchain",
+      "app9-desc": "Per‑transaction signature keys derived from CLS, wallet authentication without private key exchange, protection against transaction replay across forks.",
+      "app10-title": "Post‑quantum ready",
+      "app10-desc": "The employed one-way mathematical functions remain secure against quantum attacks. For full post‑quantum protection it is enough to replace this functions with a quantum‑safe functions — the core CLS method stays unchanged.",
+      "crypto-title": "Cryptographic properties",
+      "crypto1-title": "No secret transmission",
+      "crypto1-desc": "CLS never leaves the endpoints; cannot be intercepted in transit.",
+      "crypto2-title": "PFS & session binding",
+      "crypto2-desc": "Unique per session, compromise of one session does not affect others.",
+      "crypto3-title": "KDF scalability",
+      "crypto3-desc": "Infinite isolated derived keys (HKDF) without extra transmissions.",
+      "audience-title": "Who will benefit",
+      "audience1-title": "Telecom & network equipment vendors",
+      "audience1-desc": "Integrate CLS into 6G, URLLC, IIoT stacks.",
+      "audience2-title": "VPN / cybersecurity companies",
+      "audience2-desc": "Build unblockable, DPI‑resistant tunnels with zero‑overhead sync.",
+      "audience3-title": "Blockchain / crypto exchanges",
+      "audience3-desc": "Prevent transaction replay, strengthen wallet authentication.",
+      "audience4-title": "IIoT & industrial automation",
+      "audience4-desc": "Zero‑overhead security for sensors, actuators, real‑time control.",
+      "audience5-title": "UAV / robotics developers",
+      "audience5-desc": "Lightweight command authentication, replay protection.",
+      "audience6-title": "Patent pools & licensors",
+      "audience6-desc": "Acquire or sublicense the pending CLS patent family.",
+      "audience7-title": "Banks, financial services",
+      "audience7-desc": "Strengthen API security, prevent replay attacks, implicit session binding.",
+      "audience8-title": "Defense & government, state services",
+      "audience8-desc": "Hidden synchronisation, zero‑overhead authentication for classified / tactical networks.",
+      "audience9-title": "Enterprises of critical infrastructure",
+      "audience9-desc": "Implicit authentication, resistance to MITM / DPI for sensitive data flows.",
+      "demo-tag": "PROOF OF CONCEPT",
+      "demo-title": "CLS‑powered VPN demo",
+      "demo-sub": "Full tunnel: obfuscation parameters (H1,S1,Jc) derived from CLS, CLS itself never transmitted.",
+      "video-desc": "Client and server establish TLS connection. CLS is computed independently on both sides — visible values match (first 8 bytes). Obfuscation parameters (H1, S1, Jc) and RNG seeds are derived from CLS. After closing TCP, both switch to UDP, client sends obfuscated ping, server replies pong. All synchronisation happens without transmitting CLS or derivative parameters over the network.\n\nNote: When no NAT exists (direct connections), the short initialisation handshake (trigger + confirmation) is not required at all — CLS can be derived immediately using standard transport parameters.",
+      "patent-head": "Russian patent application",
+      "patent-number": "Application № 2026113066 dated 21.04.2026",
+      "contact-title": "We are looking for a strategic partnership",
+      "contact-text": "We are seeking interested parties and partners to create a joint commercial product based on CLS (e.g., a VPN with implicit synchronization of tunnel behavior parameters, a secure messenger, etc.), to obtain a patent, license it, or acquire it. Priority date established, formal examination passed — ready for commercial engagement.",
+      "contact-btn": "Contact us",
+      "footer1": "Cross‑Layer Stitch (CLS) — priority patent application, May 2026. No source code or mathematical core is exposed without NDA."
+    },
+    ru: {
+      "patent-tag": "Патент pending · Приоритет: май 2026",
+      "hero-title": "Cross-Layer Stitch",
+      "hero-sub": "Синхронизация без передачи. Кросс-уровневый параметр, который никогда не передаётся.",
+      "demo-btn": "Смотреть демо",
+      "why-title": "Почему CLS меняет правила",
+      "prop1-title": "Кросс‑уровневость",
+      "prop1-desc": "Вычисляется из L4 и L5+, привязка к соединению.",
+      "prop2-title": "Никогда не передаётся",
+      "prop2-desc": "Существует только на узлах — DPI/ML не видят.",
+      "prop3-title": "Уникальность сессии & PFS",
+      "prop3-desc": "Каждая сессия даёт свой CLS, компрометация одной не влияет на другие.",
+      "applications-title": "Применение CLS и его производных значений",
+      "app1-title": "VPN / Обфусцированные туннели",
+      "app1-desc": "Ключи шифрования, параметры обфускации (H1/S1/Jc) выводятся из CLS. Нет передачи синхронизации.",
+      "app2-title": "IIoT и URLLC",
+      "app2-desc": "Ключи аутентификации устройств, счётчики replay, параметры QoS выводятся из CLS.",
+      "app3-title": "6G / Zero‑Trust",
+      "app3-desc": "Неявная аутентификация, ключи сессии, приоритеты выводятся из CLS.",
+      "app4-title": "Безопасность API / антифрод",
+      "app4-desc": "HMAC-ключи запросов, динамические токены выводятся из CLS. Ключи не передаются.",
+      "app5-title": "Аутентификация без паролей",
+      "app5-desc": "Временные токены выводятся из CLS. Нет передачи паролей, защита от replay.",
+      "app6-title": "Распределённые системы / DRM",
+      "app6-desc": "Seed для ГПСЧ, ключи потоков выводятся из CLS.",
+      "app7-title": "Мультиплексированные потоки (QUIC/MPTCP)",
+      "app7-desc": "Из одного CLS + Stream ID выводятся изолированные ключи для каждого потока.",
+      "app8-title": "Рои БПЛА / телеметрия",
+      "app8-desc": "Аутентификация команд, скользящие счётчики выводятся из CLS.",
+      "app9-title": "Криптовалюты / Блокчейн",
+      "app9-desc": "Ключи подписи транзакций выводятся из CLS, аутентификация кошельков без обмена закрытыми ключами, защита от replay транзакций между форками.",
+      "app10-title": "Пост‑квантовая готовность",
+      "app10-desc": "Применяемые односторонние математические функции сохраняют стойкость к атакам квантовых компьютеров. Для полной постквантовой защиты достаточно заменить эти функции на постквантовый аналог — суть CLS не меняется.",
+      "crypto-title": "Криптографические свойства",
+      "crypto1-title": "Нет передачи секрета",
+      "crypto1-desc": "CLS не покидает узлы, перехват в канале невозможен.",
+      "crypto2-title": "PFS и привязка к сессии",
+      "crypto2-desc": "Уникален для каждой сессии; компрометация одной сессии не раскрывает другие.",
+      "crypto3-title": "Масштабируемость KDF",
+      "crypto3-desc": "Бесконечное число изолированных производных ключей (HKDF) без обмена.",
+      "audience-title": "Кому может быть интересно",
+      "audience1-title": "Производители телеком‑оборудования",
+      "audience1-desc": "Интеграция CLS в стеки 6G, URLLC, IIoT.",
+      "audience2-title": "VPN / кибербезопасность",
+      "audience2-desc": "Создание неблокируемых, DPI‑стойких туннелей с нулевой синхронизацией.",
+      "audience3-title": "Блокчейн / криптобиржи",
+      "audience3-desc": "Защита от replay транзакций, усиление аутентификации кошельков.",
+      "audience4-title": "IIoT и промышленная автоматика",
+      "audience4-desc": "Безопасность с нулевыми накладными расходами для датчиков, приводов, real‑time управления.",
+      "audience5-title": "Разработчики БПЛА / робототехники",
+      "audience5-desc": "Лёгкая аутентификация команд, защита от повторов.",
+      "audience6-title": "Патентные пулы / лицензиары",
+      "audience6-desc": "Приобретение или сублицензирование патентного семейства CLS.",
+      "audience7-title": "Банки, финансовый сектор",
+      "audience7-desc": "Усиление безопасности API, защита от replay-атак, неявная привязка к сессии.",
+      "audience8-title": "Оборонные предприятия / госструктуры и госслужбы",
+      "audience8-desc": "Скрытая синхронизация, аутентификация с нулевой нагрузкой для засекреченных и тактических сетей.",
+      "audience9-title": "Предприятия критической инфраструктуры",
+      "audience9-desc": "Неявная аутентификация, устойчивость к MITM/DPI для потоков чувствительных данных.",
+      "demo-tag": "ДЕМОНСТРАЦИЯ",
+      "demo-title": "Демо VPN на основе CLS",
+      "demo-sub": "Полноценный туннель: параметры обфускации (H1,S1,Jc) выводятся из CLS, сам CLS никогда не передаётся.",
+      "video-desc": "Клиент и сервер устанавливают TLS-соединение. CLS вычисляется независимо на обеих сторонах — значения совпадают (первые 8 байт). Параметры обфускации (H1, S1, Jc) и seed ГПСЧ выводятся из CLS. После закрытия TCP переход на UDP, клиент шлёт обфусцированный ping, сервер отвечает pong. Вся синхронизация происходит без передачи CLS или производных параметров.\n\nПримечание: Если NAT отсутствует (прямое соединение), короткий handshake инициализации (триггер + подтверждение) не требуется — CLS может быть вычислен немедленно, используя стандартные транспортные параметры.",
+      "patent-head": "Заявка на патент РФ",
+      "patent-number": "Заявка № 2026113066 от 21.04.2026",
+      "contact-title": "Ищем стратегическое партнёрство",
+      "contact-text": "Ищем заинтересованных лиц и партнёров для создания совместного коммерческого продукта на основе CLS (например, VPN с имплицитной синхронизацией параметров поведения тоннеля, защищенного мессенджера и т. д.), для получения патента, его лицензирования или приобретения. Дата приоритета установлена, формальная экспертиза пройдена — готовы к коммерческому взаимодействию.",
+      "contact-btn": "Связаться",
+      "footer1": "Cross‑Layer Stitch (CLS) — приоритет патентной заявки, май 2026. Исходный код и математическое ядро не раскрываются без NDA."
+    }
+  };
+
+  let currentLang = 'en';
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    const isRu = lang === 'ru';
+    document.querySelectorAll('.core-en').forEach(el => el.style.display = isRu ? 'none' : 'block');
+    document.querySelectorAll('.core-ru').forEach(el => el.style.display = isRu ? 'block' : 'none');
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[lang] && translations[lang][key]) {
+        el.innerHTML = translations[lang][key];
+      }
+    });
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
+  });
+
+  setLanguage('en');
+</script>
+</body>
+</html>
