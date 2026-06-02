@@ -389,7 +389,7 @@
         <source src="assets/demo/cls-vpn-demo.mp4" type="video/mp4">
       </video>
       <div class="vid-desc" data-i18n="video-desc">
-        Client and server establish TLS connection. CLS is computed independently on both sides — visible values match (first 8 bytes). Obfuscation parameters (H1, S1, Jc) and RNG seeds are derived from CLS. After closing TCP, both switch to UDP, client sends obfuscated ping, server replies pong. All synchronisation happens without transmitting CLS or derivative parameters over the network.
+        Client and server establish TLS connection. CLS is obtained independently on both sides — visible values match (first 8 bytes). Obfuscation parameters (H1, S1, Jc) and RNG seeds are derived from CLS. After closing TCP, both switch to UDP, client sends obfuscated ping, server replies pong. All synchronisation happens without transmitting CLS or derivative parameters over the network.
         <br><br>
         <strong>Note:</strong> When no NAT exists (direct connections), the short initialisation handshake (trigger + confirmation) is not required at all — CLS can be derived immediately using standard transport parameters.
       </div>
@@ -643,7 +643,7 @@
       "demo-tag": "ДЕМОНСТРАЦИЯ",
       "demo-title": "Демо VPN на основе CLS",
       "demo-sub": "Полноценный туннель: параметры обфускации (H1,S1,Jc) выводятся из CLS, сам CLS никогда не передаётся.",
-      "video-desc": "Клиент и сервер устанавливают TLS-соединение. CLS вычисляется независимо на обеих сторонах — значения совпадают (первые 8 байт). Параметры обфускации (H1, S1, Jc) и seed ГПСЧ выводятся из CLS. После закрытия TCP переход на UDP, клиент шлёт обфусцированный ping, сервер отвечает pong. Вся синхронизация происходит без передачи CLS или производных параметров.\n\nПримечание: Если NAT отсутствует (прямое соединение), короткий handshake инициализации (триггер + подтверждение) не требуется — CLS может быть вычислен немедленно, используя стандартные транспортные параметры.",
+      "video-desc": "Клиент и сервер устанавливают TLS-соединение. CLS получается независимо на обеих сторонах — значения совпадают (первые 8 байт). Параметры обфускации (H1, S1, Jc) и seed ГПСЧ выводятся из CLS. После закрытия TCP переход на UDP, клиент шлёт обфусцированный ping, сервер отвечает pong. Вся синхронизация происходит без передачи CLS или производных параметров.\n\nПримечание: Если NAT отсутствует (прямое соединение), короткий handshake инициализации (триггер + подтверждение) не требуется — CLS может быть вычислен немедленно, используя стандартные транспортные параметры.",
       "patent-head": "Заявка на патент РФ",
       "patent-number": "Заявка № 2026113066 от 21.04.2026",
       "contact-title": "Ищем стратегическое партнёрство",
