@@ -382,7 +382,7 @@
     <div style="text-align: center;">
       <div class="tag" data-i18n="demo-tag">PROOF OF CONCEPT</div>
       <h2 data-i18n="demo-title">CLS‑powered VPN demo</h2>
-      <p style="color:#AAA; max-width: 600px; margin: 12px auto;" data-i18n="demo-sub">Full tunnel: obfuscation parameters (H1,S1,Jc) derived from CLS, CLS itself never transmitted.</p>
+      <p style="color:#AAA; max-width: 600px; margin: 12px auto;" data-i18n="demo-sub">The video below doesn't show a full-fledged VPV tunnel, but a working prototype (Proof of Concept): the obfuscation parameters (H1, S1, Jc) are derived from the CLS, and the CLS itself is never transmitted. The CLS is obtained independently on the client and server.</p>
     </div>
     <div class="demo-video">
       <video autoplay loop muted playsinline preload="metadata" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1280' height='720' viewBox='0 0 1280 720'%3E%3Crect width='1280' height='720' fill='%230a0a0f'/%3E%3Ctext x='640' y='360' font-family='monospace' font-size='24' fill='%2300d4ff' text-anchor='middle' dominant-baseline='middle'%3ECLS-VPN Terminal Demo%3C/text%3E%3C/svg%3E">
@@ -572,7 +572,7 @@
       "audience9-desc": "Implicit authentication, resistance to MITM / DPI for sensitive data flows.",
       "demo-tag": "PROOF OF CONCEPT",
       "demo-title": "CLS‑powered VPN demo",
-      "demo-sub": "Full tunnel: obfuscation parameters (H1,S1,Jc) derived from CLS, CLS itself never transmitted.",
+      "demo-sub": "The video below doesn't show a full-fledged VPV tunnel, but a working prototype (Proof of Concept): the obfuscation parameters (H1, S1, Jc) are derived from the CLS, and the CLS itself is never transmitted. The CLS is obtained independently on the client and server.",
       "video-desc": "Client and server establish TLS connection. CLS is obtained independently on both sides — visible values match (first 8 bytes). Obfuscation parameters (H1, S1, Jc) and RNG seeds are derived from CLS. After closing TCP, both switch to UDP, client sends obfuscated ping, server replies pong. All synchronisation happens without transmitting CLS or derivative parameters over the network.\n\nNote: When no NAT exists (direct connections), the short initialisation handshake (trigger + confirmation) is not required at all — CLS can be obtained immediately using standard transport parameters.",
       "patent-head": "Russian patent application",
       "patent-number": "Application № 2026113066 dated 21.04.2026",
@@ -641,8 +641,8 @@
       "audience9-title": "Предприятия критической инфраструктуры",
       "audience9-desc": "Неявная аутентификация, устойчивость к MITM/DPI для потоков чувствительных данных.",
       "demo-tag": "ДЕМОНСТРАЦИЯ",
-      "demo-title": "Демо VPN на основе CLS",
-      "demo-sub": "Полноценный туннель: параметры обфускации (H1,S1,Jc) выводятся из CLS, сам CLS никогда не передаётся.",
+      "demo-title": "Работающий прототип: VPN на основе CLS",
+      "demo-sub": "Ниже на видео представлен не полноценный туннель VPV, а реально работающий прототип (Proof of Concept): параметры обфускации (H1, S1, Jc) выводятся из CLS, сам CLS никогда не передаётся. CLS получен независимо на клиенте и сервере.",
       "video-desc": "Клиент и сервер устанавливают TLS-соединение. CLS получается независимо на обеих сторонах — значения совпадают (первые 8 байт). Параметры обфускации (H1, S1, Jc) и seed ГПСЧ выводятся из CLS. После закрытия TCP переход на UDP, клиент шлёт обфусцированный ping, сервер отвечает pong. Вся синхронизация происходит без передачи CLS или производных параметров.\n\nПримечание: Если NAT отсутствует (прямое соединение), короткий handshake инициализации (триггер + подтверждение) не требуется — CLS может быть получен немедленно, используя стандартные транспортные параметры.",
       "patent-head": "Заявка на патент РФ",
       "patent-number": "Заявка № 2026113066 от 21.04.2026",
